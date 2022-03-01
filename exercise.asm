@@ -8,7 +8,7 @@
 	cseg	AT	0
 	ljmp	Main		
 ;-----------------------------------------------------------------------------
-; Zadanie dla chetnych nr 5
+; The algorithm is to convert the binary value from an 8-bit A/D converter, the reference voltage of which is 5 V.
 ;-----------------------------------------------------------------------------
 Main:
 	mov XL, #0x3E ; wartosc wejsciowa
