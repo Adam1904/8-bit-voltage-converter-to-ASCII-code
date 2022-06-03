@@ -1,19 +1,19 @@
 ;-----------------------------------------------------------------------------
-	XL 	equ 	0x50 ; mlodszy bajt wartosci wejsciowej
-	YH 	equ 	0x52 ; starszy bajt wartosci wejsciowej
-	YL 	equ 	0x53 ; wartosc pomocnicza
-	Z  	equ 	0x40 ; mlodszy bajt wartosci wejsciowej
-	ZZ	equ 	0x41 ; starszy bajt wartosci wejsciowej
+	XL 	equ 	0x50 ; the lower byte of the input value
+	YH 	equ 	0x52 ; high byte of the input value
+	YL 	equ 	0x53 ; auxiliary value
+	Z  	equ 	0x40 ; the lower byte of the input value
+	ZZ	equ 	0x41 ; high byte of the input value
 ;-----------------------------------------------------------------------------
 	cseg	AT	0
 	ljmp	Main		
 ;-----------------------------------------------------------------------------
-; The algorithm is to convert the binary value from an 8-bit A/D converter, the reference voltage of which is 5 V.
+; The algorithm converts a binary value from an 8-bit A/D converter, where the reference voltage of which is 5 V.
 ;-----------------------------------------------------------------------------
 Main:
-	mov XL, #0x3E ; wartosc wejsciowa
+	mov XL, #0x3E ; input value
 	
-mnozenie_16bit:
+multiplication_16bit:
 	
 	mov R1, #0x00
 	mov R2, #0x00
@@ -56,14 +56,14 @@ mnozenie_16bit:
 
 
 	mov R6, #0 
-       	mov R7, #0
+    mov R7, #0
 	mov B, #16
 	mov R0, YL
 	mov R1, YH
 	mov R2, #33h
 	mov R3, #00h
 
-dzielenie_16bit:
+divide_16bit:
 
 	clr C
 	mov A, R0
@@ -87,12 +87,12 @@ dzielenie_16bit:
 	mov DPH, A
 	cpl C
 
-	jnc dziel_bit
+	jnc divide_bit
 
 	mov R7, DPH
 	mov R6, DPL
 
-dziel_bit:
+divide_bit:
 
 	mov A, R4
 	rlc A
@@ -100,7 +100,7 @@ dziel_bit:
 	mov A, R5
 	rlc A
 	mov R5, A
-	djnz B, dzielenie_16bit
+	djnz B, divide_16bit
 
 	mov A, R5
 	mov R1, A
@@ -111,10 +111,10 @@ dziel_bit:
 	mov A, R6
 	mov R2, A
 	
-	mov Z, R0 ; dane wyjsciowe
+	mov Z, R0 ; output data
 	mov ZZ, R1
 	
-konwersja_do_ASCII:
+convert_to_ASCII:
 
 	mov B, #10
 	mov A , Z
@@ -125,10 +125,10 @@ konwersja_do_ASCII:
 	mov R2, B
 	mov R3, A
 	mov A, ZZ
-	cjne A, #00h, dalej
-	ljmp dodaj
+	cjne A, #00h, step_further
+	ljmp addition
 	
-dalej:
+step_further:
 
 	mov A, #6
 	add A,R1
@@ -153,7 +153,7 @@ dalej:
 	mov R4,B
 	mov R5,A
 	
-dodaj:
+addition:
 
 	mov A, R5
 	add A, #30h
@@ -175,7 +175,7 @@ dodaj:
 	add A, #30h
 	mov R1, A
 
-wstawienie_wyniku:
+insert_result:
 
 	mov 0x43, R1
 	mov 0x42, R2
