@@ -56,7 +56,7 @@ multiplication_16bit:
 
 
 	mov R6, #0 
-    mov R7, #0
+	mov R7, #0
 	mov B, #16
 	mov R0, YL
 	mov R1, YH
